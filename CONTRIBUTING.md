@@ -1,15 +1,37 @@
-# Contribution Guidelines for Hacktoberfest 2025 Computer Games
+# Contributing to Hacktoberfest 2025: Computer Games
 
-We welcome contributions from everyone! Here’s how you can help:
+Thank you for your interest in contributing!
 
 ## How to Contribute
-1. **Fork the Repository**: Click the fork button in the top right corner of this page.
-2. **Clone Your Fork**: Use the command `git clone https://github.com/YOUR-USERNAME/hacktoberfest-2025-computer-games.git` to clone your fork to your local machine.
-3. **Create a Branch**: Create a new branch for your feature or bug fix using `git checkout -b your-branch-name`.
-4. **Make Your Changes**: Make the necessary changes to the code.
-5. **Commit Your Changes**: Use `git commit -m "Description of your changes"` to commit your changes.
-6. **Push to the Branch**: Push your changes using `git push origin your-branch-name`.
-7. **Open a Pull Request**: Go to the original repository and click on the 'Pull requests' tab, then click on 'New pull request'.
 
-## Code of Conduct
-By participating, you agree to abide by our [Code of Conduct](CODE_OF_CONDUCT.md).
+1. **Find an Issue:**  
+   Look for issues labeled `hacktoberfest` for contribution ideas.
+
+2. **Fork & Clone:**  
+   Fork the repository and clone it to your local machine.
+
+3. **Add Your Game:**  
+   - Create a new folder for your game in the repository.
+   - Include a README in your game folder with setup/run instructions.
+
+4. **Submit a Pull Request:**  
+   - Open a pull request referencing the relevant issue.
+   - Fill in the PR template (if provided).
+
+## Contribution Rules
+
+- Only submit original work.
+- Be respectful in all communications.
+- No spam or invalid PRs.
+- PRs must be self-contained.
+- Follow the [Code of Conduct](CODE_OF_CONDUCT.md).
+
+## Maintainer Guidelines
+
+- Review PRs promptly.
+- Use the following labels:
+  - `hacktoberfest-accepted` for valid contributions
+  - `spam` for spammy requests
+  - `invalid` for non-compliant submissions
+
+Thanks for helping make Hacktoberfest awesome!
