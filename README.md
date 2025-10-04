@@ -73,8 +73,8 @@ Celebrate open source and gaming!
 
 | User | Game | Screenshot | Description |
 |------|------|------------|-------------|
-| @exampleuser | Space Invaders | ![Space Invaders](assets/carousel/sample-game-1.png) | Classic arcade shooter made in Python! |
-
+| @Sumitvi | ChronoShift | ![ChronoShift](assets/carousel/sample-game-5.png) |JavaScript Game ChronoShift |
+| @Hariksh | Space Shooter | ![ChronoShift](assets/carousel/sample-game-4.png) |Space Shooter Game|
 ---
 
 ## 📝 How to Get Started
