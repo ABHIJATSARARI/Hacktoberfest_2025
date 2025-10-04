@@ -1,11 +1,6 @@
 <!-- Festive Hacktoberfest SVG Banner -->
 <p align="center">
-  <img src="assets/hacktoberfest-banner.svg" alt="Hacktoberfest Banner" width="500"/>
-</p>
-
-<!-- Project Icon -->
-<p align="center">
-  <img src="assets/hacktoberfest-logo.png" alt="Hacktoberfest Logo" width="120"/>
+  <img src="logo-hacktoberfest-12--nav.0ac01b46.svg" alt="Hacktoberfest Banner" width="500"/>
 </p>
 
 # 🎮 Hacktoberfest 2025: Computer Games Contribution Repository 🎉
@@ -27,6 +22,13 @@ Celebrate open source and gaming!
 🚀 All languages and levels welcome.
 
 ---
+
+<p align="center">
+  <img src="Image.png" alt="Hacktoberfest Banner" width="500"/>
+</p>
+
+
+
 
 ## 🖼️ Featured Project Images & Demos
 
