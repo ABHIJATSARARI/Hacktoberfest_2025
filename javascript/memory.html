@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChronoShift Puzzle</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-glow: #00ffff;
+            --secondary-glow: #ff00ff;
+            --background-color: #0d0221;
+            --tile-color: #261447;
+            --tile-border: rgba(0, 255, 255, 0.5);
+            --text-color: #f0f0f0;
+            --font-family: 'Orbitron', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--background-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: clamp(2.5rem, 8vw, 4rem);
+            font-weight: 700;
+            color: var(--primary-glow);
+            text-shadow: 0 0 5px var(--primary-glow), 0 0 15px var(--primary-glow), 0 0 30px var(--secondary-glow);
+            animation: flicker 3s infinite alternate;
+        }
+
+        .stats-controls {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            width: 100%;
+            background: rgba(0,0,0,0.3);
+            padding: 1rem;
+            border-radius: 15px;
+            border: 1px solid var(--tile-border);
+            box-shadow: 0 0 15px var(--tile-border) inset;
+        }
+
+        .stat-item {
+            font-size: clamp(1rem, 4vw, 1.5rem);
+        }
+
+        .stat-item span {
+            font-weight: 700;
+            color: var(--primary-glow);
+        }
+
+        .game-board {
+            display: grid;
+            border: 2px solid var(--primary-glow);
+            border-radius: 10px;
+            box-shadow: 0 0 20px var(--primary-glow);
+            overflow: hidden;
+            aspect-ratio: 1 / 1;
+            width: 100%;
+            max-width: 500px; /* Limit max size for large screens */
+        }
+
+        .tile {
+            background-color: var(--tile-color);
+            border: 1px solid var(--tile-border);
+            cursor: pointer;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        
+        .tile.empty {
+            background-color: transparent;
+            cursor: default;
+            border-color: rgba(255,0,255,0.3);
+        }
+
+        .tile:not(.empty):hover {
+            transform: scale(1.05);
+            background-color: #3a2066;
+            z-index: 10;
+        }
+
+        .tile svg {
+            width: 80%;
+            height: 80%;
+        }
+        .tile .circuit {
+            fill: none;
+            stroke: var(--primary-glow);
+            stroke-width: 8;
+            stroke-linecap: round;
+            filter: drop-shadow(0 0 5px var(--primary-glow));
+        }
+
+        .game-actions {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .btn {
+            font-family: var(--font-family);
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 700;
+            border: 2px solid var(--primary-glow);
+            border-radius: 10px;
+            background-color: transparent;
+            color: var(--primary-glow);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-shadow: 0 0 5px var(--primary-glow);
+            box-shadow: 0 0 10px var(--primary-glow) inset, 0 0 5px var(--primary-glow);
+        }
+
+        .btn:hover:not(:disabled) {
+            background-color: var(--primary-glow);
+            color: var(--background-color);
+            box-shadow: 0 0 20px var(--primary-glow), 0 0 30px var(--primary-glow);
+        }
+        
+        .btn:disabled {
+            border-color: #555;
+            color: #555;
+            cursor: not-allowed;
+            text-shadow: none;
+            box-shadow: none;
+        }
+
+        #chrono-btn {
+            border-color: var(--secondary-glow);
+            color: var(--secondary-glow);
+            text-shadow: 0 0 5px var(--secondary-glow);
+            box-shadow: 0 0 10px var(--secondary-glow) inset, 0 0 5px var(--secondary-glow);
+        }
+
+        #chrono-btn:hover:not(:disabled) {
+            background-color: var(--secondary-glow);
+            color: var(--background-color);
+            box-shadow: 0 0 20px var(--secondary-glow), 0 0 30px var(--secondary-glow);
+        }
+
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            z-index: 1000;
+        }
+
+        .modal.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background-color: var(--background-color);
+            padding: 2.5rem;
+            border-radius: 15px;
+            border: 2px solid var(--primary-glow);
+            box-shadow: 0 0 25px var(--primary-glow);
+            text-align: center;
+            transform: scale(0.7);
+            transition: transform 0.3s ease;
+        }
+        
+        .modal.visible .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary-glow);
+            text-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        .modal-content p {
+            margin-bottom: 2rem;
+            font-size: 1.2rem;
+        }
+
+        .rules-list {
+            list-style: none;
+            text-align: left;
+            margin-bottom: 2rem;
+            padding-left: 0;
+            line-height: 1.6;
+        }
+
+        .rules-list li {
+            margin-bottom: 1rem;
+        }
+
+        .rules-list li::before {
+            content: '»';
+            color: var(--primary-glow);
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+
+        @keyframes flicker {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.8;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .game-container {
+                gap: 1.5rem;
+            }
+
+            .header p {
+                font-size: 0.9rem;
+            }
+
+            .stats-controls {
+                flex-direction: column;
+                gap: 0.5rem;
+                padding: 0.75rem;
+            }
+
+            .game-actions {
+                flex-direction: column;
+                width: 90%;
+                gap: 1rem;
+            }
+
+            .btn {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+
+            .modal-content {
+                padding: 1.5rem;
+                width: 90%;
+            }
+
+            .modal-content h2 {
+                font-size: 2rem;
+            }
+
+            .modal-content p {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-container">
+        <header class="header">
+            <h1>ChronoShift</h1>
+            <p>Connect the circuit from corner to corner.</p>
+        </header>
+
+        <div class="stats-controls">
+            <div class="stat-item">Difficulty: <span id="difficulty-display">4x4</span></div>
+            <div class="stat-item">Moves: <span id="moves-count">0</span></div>
+        </div>
+
+        <div id="game-board" class="game-board"></div>
+        
+        <div class="game-actions">
+            <button id="chrono-btn" class="btn">Chrono-Shift (Undo)</button>
+            <button id="rules-btn" class="btn">Rules</button>
+            <button id="new-game-btn" class="btn">Start Game</button>
+        </div>
+    </div>
+
+    <div id="win-modal" class="modal">
+        <div class="modal-content">
+            <h2>Circuit Complete!</h2>
+            <p>You solved the puzzle in <span id="final-moves">0</span> moves.</p>
+            <button id="play-again-btn" class="btn">Play Again</button>
+        </div>
+    </div>
+
+    <div id="rules-modal" class="modal">
+        <div class="modal-content">
+            <h2>How to Play</h2>
+            <ul class="rules-list">
+                <li>The goal is to connect the circuit from the top-left corner to the bottom-right corner.</li>
+                <li>Click a tile adjacent to the empty space to slide it.</li>
+                <li>Continue sliding tiles until the circuit path is complete.</li>
+                <li>Use 'Chrono-Shift' to undo your last move, but be warned, it still counts as a move!</li>
+            </ul>
+            <button id="close-rules-btn" class="btn">Got It</button>
+        </div>
+    </div>
+
+
+    <script src="memory-game.js"></script>
+</body>
+</html>
+
+
