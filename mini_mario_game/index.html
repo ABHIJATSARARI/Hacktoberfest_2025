@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Super Platform Adventure - A Mario-style platformer game built with HTML5 Canvas">
+    <meta name="keywords" content="platformer, game, mario, javascript, html5">
+    <meta name="author" content="Your Name">
+    <title>Super Platform Adventure</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <h1>🍄 Super Platform Adventure</h1>
+        
+        <div class="hud">
+            <div class="hud-item">
+                <span>🪙 Coins: <span id="coins">0</span></span>
+            </div>
+            <div class="hud-item">
+                <span>⭐ Score: <span id="score">0</span></span>
+            </div>
+            <div class="hud-item">
+                <span class="lives">❤️ Lives: <span id="lives">3</span></span>
+            </div>
+            <div class="hud-item">
+                <span>🎯 Level: <span id="level">1</span></span>
+            </div>
+        </div>
+        
+        <canvas id="gameCanvas" width="800" height="500"></canvas>
+        
+        <div class="controls">
+            <strong>🎮 Controls:</strong>
+            <div class="control-keys">
+                <span class="key">← A / ←</span>
+                <span class="key">→ D / →</span>
+                <span class="key">↑ W / ↑ / SPACE</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Over Screen -->
+    <div class="game-over-screen" id="gameOverScreen">
+        <h2>💀 Game Over!</h2>
+        <div class="stats">
+            <div>Final Score: <strong id="finalScore">0</strong></div>
+            <div>Coins Collected: <strong id="finalCoins">0</strong></div>
+            <div>Level Reached: <strong id="finalLevel">0</strong></div>
+        </div>
+        <button class="btn" onclick="restartGame()">🔄 Play Again</button>
+    </div>
+
+    <!-- Level Complete Screen -->
+    <div class="level-complete-screen" id="levelCompleteScreen">
+        <h2>🎉 Level Complete!</h2>
+        <div class="stats">
+            <div>Coins: <strong id="levelCoins">0</strong></div>
+            <div>Bonus: <strong id="levelBonus">0</strong></div>
+        </div>
+        <button class="btn btn-next" onclick="nextLevel()">➡️ Next Level</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
