@@ -45,6 +45,7 @@ Celebrate open source and gaming!
 ## 🕹️ Community Game Carousel
 
 > **Contributors:** Add your game image to `/assets/carousel/` and it will be featured below!
+> name the image files like sample-game-1.png........ name it the next no whatever display inside folder last file
 
 <p align="center">
   <!-- Carousel placeholder: Add more images as contributors upload them! -->
