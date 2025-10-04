@@ -52,6 +52,11 @@ Celebrate open source and gaming!
   <img src="assets/carousel/sample-game-1.png" width="180"/>
   <img src="assets/carousel/sample-game-2.png" width="180"/>
   <img src="assets/carousel/sample-game-3.png" width="180"/>
+  <img src="assets/carousel/sample-game-4.png" width="180"/>
+  <img src="assets/carousel/sample-game-5.png" width="180"/>
+  <img src="assets/carousel/sample-game-6.png" width="180"/>
+  <img src="assets/carousel/sample-game-7.png" width="180"/>
+  <img src="assets/carousel/sample-game-8.png" width="180"/>
 </p>
 
 ---
