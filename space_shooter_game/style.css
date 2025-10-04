@@ -1,0 +1,105 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(to bottom, #000428, #004e92);
+    font-family: 'Arial', sans-serif;
+    overflow: hidden;
+}
+
+#gameContainer {
+    position: relative;
+    width: 800px;
+    height: 600px;
+    background: radial-gradient(ellipse at center, #1a1a2e 0%, #0f0f1e 100%);
+    border: 3px solid #00d4ff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+}
+
+#gameCanvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+#ui {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    color: #00d4ff;
+    font-size: 20px;
+    text-shadow: 0 0 10px rgba(0, 212, 255, 0.8);
+    z-index: 10;
+}
+
+#gameOver {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: white;
+    display: none;
+    z-index: 20;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 40px;
+    border-radius: 15px;
+    border: 2px solid #00d4ff;
+}
+
+#gameOver h1 {
+    font-size: 48px;
+    color: #ff4444;
+    margin-bottom: 20px;
+    text-shadow: 0 0 20px #ff4444;
+}
+
+#gameOver p {
+    font-size: 24px;
+    margin: 10px 0;
+}
+
+#restartBtn {
+    margin-top: 20px;
+    padding: 15px 40px;
+    font-size: 20px;
+    background: linear-gradient(45deg, #00d4ff, #0099cc);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+#restartBtn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.8);
+}
+
+.star {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    animation: twinkle 2s infinite;
+}
+
+@keyframes twinkle {
+
+    0%,
+    100% {
+        opacity: 0.3;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
