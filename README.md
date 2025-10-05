@@ -39,13 +39,14 @@ Celebrate open source and gaming!
 > Want your game featured?  
 > Add a screenshot (PNG/JPG/GIF) in your game folder and mention it in your PR!  
 > **Repo maintainers will showcase the best games here!**
+> **Contributors:** Add your game image to `/assets/carousel/` and it will be featured below!
+> name the image files like sample-game-1.png........ name it the next no whatever display inside folder last file
+
 
 ---
 
 ## 🕹️ Community Game Carousel
 
-> **Contributors:** Add your game image to `/assets/carousel/` and it will be featured below!
-> name the image files like sample-game-1.png........ name it the next no whatever display inside folder last file
 
 <p align="center">
   <!-- Carousel placeholder: Add more images as contributors upload them! -->
