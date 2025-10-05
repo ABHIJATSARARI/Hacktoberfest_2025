@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pong Game - Hacktoberfest 2025</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Courier New', monospace;
+            color: white;
+        }
+
+        .game-container {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .subtitle {
+            margin-bottom: 20px;
+            font-size: 1em;
+            opacity: 0.8;
+        }
+
+        #gameCanvas {
+            border: 3px solid white;
+            border-radius: 5px;
+            background: #000;
+            display: block;
+            margin: 20px auto;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .score-board {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .player-score {
+            padding: 10px 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .controls {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        .controls h3 {
+            margin-bottom: 10px;
+        }
+
+        .controls p {
+            margin: 5px 0;
+            font-size: 0.9em;
+        }
+
+        .btn {
+            margin-top: 15px;
+            padding: 12px 30px;
+            font-size: 1.1em;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-family: 'Courier New', monospace;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(245, 87, 108, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .game-status {
+            margin: 15px 0;
+            font-size: 1.2em;
+            font-weight: bold;
+            min-height: 30px;
+        }
+
+        .difficulty {
+            margin: 15px 0;
+        }
+
+        .difficulty select {
+            padding: 8px 15px;
+            font-size: 1em;
+            border-radius: 5px;
+            border: 2px solid white;
+            background: rgba(255, 255, 255, 0.9);
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            #gameCanvas {
+                width: 90vw;
+                height: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>🏓 PONG GAME</h1>
+        <p class="subtitle">Hacktoberfest 2025</p>
+        
+        <div class="score-board">
+            <div class="player-score">
+                <div>Player</div>
+                <div id="playerScore">0</div>
+            </div>
+            <div class="player-score">
+                <div>Computer</div>
+                <div id="computerScore">0</div>
+            </div>
+        </div>
+
+        <div class="game-status" id="gameStatus">Press START to begin!</div>
+
+        <canvas id="gameCanvas" width="800" height="400"></canvas>
+
+        <div class="difficulty">
+            <label for="difficulty">Difficulty: </label>
+            <select id="difficulty">
+                <option value="easy">Easy</option>
+                <option value="medium" selected>Medium</option>
+                <option value="hard">Hard</option>
+            </select>
+        </div>
+
+        <button class="btn" id="startBtn" onclick="startGame()">START GAME</button>
+        <button class="btn" id="pauseBtn" onclick="togglePause()" style="display: none;">PAUSE</button>
+
+        <div class="controls">
+            <h3>🎮 Controls</h3>
+            <p><strong>Mouse:</strong> Move your paddle</p>
+            <p><strong>W/S Keys:</strong> Alternative controls</p>
+            <p><strong>P:</strong> Pause/Resume</p>
+            <p><strong>First to 5 points wins!</strong></p>
+        </div>
+    </div>
+
+    <script src="pong.js"></script>
+</body>
+</html>
