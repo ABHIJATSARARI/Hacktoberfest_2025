@@ -33,7 +33,7 @@ Celebrate open source and gaming!
 ## 🖼️ Featured Project Images & Demos
 
 <p align="center">
-  <img src="assets/project-image.png" alt="Project Showcase" width="350"/>
+  <img src="Image.png" alt="Project Showcase" width="350"/>
 </p>
 
 > Want your game featured?  
