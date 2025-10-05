@@ -75,6 +75,7 @@ Celebrate open source and gaming!
 |------|------|------------|-------------|
 | @Sumitvi | ChronoShift | ![ChronoShift](assets/carousel/sample-game-5.png) |JavaScript Game ChronoShift |
 | @Hariksh | Space Shooter | ![ChronoShift](assets/carousel/sample-game-4.png) |Space Shooter Game|
+| @NothingADSR123 | Car Game | ![ChronoShift](assets/carousel/sample-game-6.png) |Car Game|
 ---
 
 ## 📝 How to Get Started
