@@ -76,6 +76,7 @@ Celebrate open source and gaming!
 | ![Sumitvi](https://github.com/Sumitvi.png) | [@Sumitvi](https://github.com/Sumitvi) | ChronoShift | ![ChronoShift](assets/carousel/sample-game-5.png) | JavaScript Game ChronoShift |
 | ![Hariksh](https://github.com/Hariksh.png) | [@Hariksh](https://github.com/Hariksh) | Space Shooter | ![Space Shooter](assets/carousel/sample-game-4.png) | Space Shooter Game |
 | ![NothingADSR123](https://github.com/NothingADSR123.png) | [@NothingADSR123](https://github.com/NothingADSR123) | Car Game | ![Car Game](assets/carousel/sample-game-6.png) | Car Game |
+| ![Uday-Choudhary](https://github.com/Uday-Choudhary.png) | [@NothingADSR123](https://github.com/Uday-Choudhary) |  True Story Game | ![ True Story Game](assets/carousel/sample-game-7.png) |  True Story Game |
 
 ---
 
