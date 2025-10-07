@@ -1,0 +1,177 @@
+/* Basic page */
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  text-align: center;
+  background: #f9f7f3;
+  margin: 0;
+  padding: 20px;
+}
+
+h1 {
+  color: #333;
+  margin: 8px 0 12px;
+}
+
+/* Scoreboard */
+.scoreboard {
+  font-size: 1.15rem;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  align-items: center;
+}
+
+/* Controls */
+.controls {
+  margin: 12px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  font-size: 1rem;
+}
+
+select {
+  padding: 6px;
+  font-size: 1rem;
+}
+
+button {
+  padding: 10px 16px;
+  font-size: 1rem;
+  background: #ff5722;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button:hover { background: #e64a19; }
+
+/* Countdown */
+.countdown {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #ff5722;
+  height: 36px;
+  margin-bottom: 8px;
+}
+
+/* Grid */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 120px);
+  grid-gap: 14px;
+  justify-content: center;
+  margin: 14px auto;
+}
+
+/* Hole */
+.hole {
+  width: 120px;
+  height: 120px;
+  background: linear-gradient(180deg, #66bb6a 0%, #4caf50 60%);
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: inset 0 -6px 12px rgba(0,0,0,0.18);
+  transition: transform 0.08s;
+}
+.hole:active { transform: scale(0.98); }
+
+/* Mole container (hidden by bottom negative offset) */
+.mole {
+  width: 80px;
+  height: 80px;
+  position: absolute;
+  bottom: -110px;
+  left: 20px;
+  transition: bottom 0.28s cubic-bezier(.2,.9,.2,1);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Mole body (circle) */
+.mole::before {
+  content: "";
+  width: 80px;
+  height: 80px;
+  background: brown;
+  border-radius: 50%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  box-shadow: 0 3px 0 rgba(0,0,0,0.12);
+}
+
+/* Eyes */
+.mole .eye-left,
+.mole .eye-right {
+  width: 15px;
+  height: 15px;
+  background: #fff;
+  border-radius: 50%;
+  position: absolute;
+  top: 22px;
+  z-index: 3;
+}
+
+.mole .eye-left { left: 14px; }
+.mole .eye-right { left: 50px; }
+
+/* Pupils inside each eye (position absolute inside the eye element) */
+.mole .pupil-left,
+.mole .pupil-right {
+  width: 7px;
+  height: 7px;
+  background: #000;
+  border-radius: 50%;
+  position: absolute;
+  top: 4px;
+  left: 4px;
+}
+
+/* Nose and mouth */
+.mole .nose {
+  width: 10px;
+  height: 10px;
+  background: #ff9fb3;
+  border-radius: 50%;
+  position: absolute;
+  top: 48px;
+  left: 35px;
+  z-index: 3;
+}
+
+.mole .mouth {
+  width: 20px;
+  height: 6px;
+  background: #ff9fb3;
+  border-radius: 8px;
+  position: absolute;
+  top: 58px;
+  left: 30px;
+  z-index: 3;
+}
+
+/* Ears */
+.mole .ear-left,
+.mole .ear-right {
+  width: 20px;
+  height: 20px;
+  background: brown;
+  border-radius: 50%;
+  position: absolute;
+  top: -6px;
+  z-index: 0;
+}
+.mole .ear-left { left: -6px; }
+.mole .ear-right { right: -6px; }
+
+/* When hole is active (mole visible) */
+.hole.active .mole {
+  bottom: 10px;
+}

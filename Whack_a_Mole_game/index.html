@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Whack-a-Mole</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>🐹 Whack-a-Mole</h1>
+
+  <div class="scoreboard">
+    <span>Score: </span><span id="score">0</span>
+    <span class="timer">Time: <span id="time">30</span>s</span>
+  </div>
+
+  <div class="controls">
+    <label for="difficulty">Difficulty: </label>
+    <select id="difficulty">
+      <option value="easy">Easy</option>
+      <option value="medium" selected>Medium</option>
+      <option value="hard">Hard</option>
+    </select>
+    <button id="startBtn">Start Game</button>
+    <button id="restartBtn" style="display:none;">Restart Game</button>
+  </div>
+
+  <div class="countdown" id="countdown"></div>
+
+  <div class="grid">
+    <div class="hole" id="hole1"></div>
+    <div class="hole" id="hole2"></div>
+    <div class="hole" id="hole3"></div>
+    <div class="hole" id="hole4"></div>
+    <div class="hole" id="hole5"></div>
+    <div class="hole" id="hole6"></div>
+    <div class="hole" id="hole7"></div>
+    <div class="hole" id="hole8"></div>
+    <div class="hole" id="hole9"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
