@@ -1,0 +1,35 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap");
+
+body {
+  margin: 0;
+  color: white;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  cursor: pointer;
+  overflow: hidden;
+  background: linear-gradient(to bottom, #87CEEB, #87CEEB 70%, #32CD32 70%, #32CD32 100%);
+}
+
+
+
+
+/* UI Elements */
+#instructions, #results, #score, #youtube-card {
+  position: absolute;
+  z-index: 10;
+  color: white;
+  text-align: center;
+}
+
+#instructions { top: 10px; left: 50%; transform: translateX(-50%); display: block; }
+#results { top: 50%; left: 50%; transform: translate(-50%, -50%); display: none; }
+#score { top: 10px; right: 10px; font-size: 2em; font-weight: bold; }
+
+#youtube { position: absolute; bottom: 10px; left: 10px; color: white; text-decoration: none; display: none; }
+#youtube-card { position: absolute; bottom: 50px; left: 10px; color: white; display: none; }
+
+canvas { display: block; z-index: 5; }
+
+a:visited { color: inherit; }
+
+
+
