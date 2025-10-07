@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simon Says Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <h1>🎮 COLOR MIND</h1>
+
+        <!-- Start Screen -->
+        <div id="startScreen" class="start-screen">
+            <h2>Welcome!</h2>
+            <div class="instructions">
+                <p>Watch the pattern of colors carefully</p>
+                <p>Then repeat it by clicking the buttons</p>
+                <p>Each round adds one more color!</p>
+            </div>
+            <button class="btn" onclick="startGame()">Start Game</button>
+            <div id="highScoreDisplay" class="message"></div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="gameScreen" class="hidden">
+            <div class="score-board">
+                <div class="score-item">Score: <span id="score">0</span></div>
+                <div class="score-item">Best: <span id="highScore">0</span></div>
+            </div>
+
+            <div class="button-grid">
+                <div class="color-button" id="btn-0" onclick="handlePlayerClick(0)"></div>
+                <div class="color-button" id="btn-1" onclick="handlePlayerClick(1)"></div>
+                <div class="color-button" id="btn-2" onclick="handlePlayerClick(2)"></div>
+                <div class="color-button" id="btn-3" onclick="handlePlayerClick(3)"></div>
+            </div>
+
+            <div class="message" id="message">Watch the pattern...</div>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="gameOverScreen" class="game-over-screen hidden">
+            <h2>Game Over!</h2>
+            <div class="final-score">Score: <span id="finalScore">0</span></div>
+            <div id="newHighScore" class="new-high-score hidden">🎉 NEW HIGH SCORE! 🎉</div>
+            <button class="btn" onclick="restartGame()">Play Again</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
