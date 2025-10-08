@@ -78,6 +78,7 @@ Celebrate open source and gaming!
 | ![Hariksh](https://github.com/Hariksh.png) | [@Hariksh](https://github.com/Hariksh) | Space Shooter | ![Space Shooter](assets/carousel/sample-game-4.png) | Space Shooter Game |
 | ![NothingADSR123](https://github.com/NothingADSR123.png) | [@NothingADSR123](https://github.com/NothingADSR123) | Car Game | ![Car Game](assets/carousel/sample-game-6.png) | Car Game |
 | ![Uday-Choudhary](https://github.com/Uday-Choudhary.png) | [@NothingADSR123](https://github.com/Uday-Choudhary) |  True Story Game | ![ True Story Game](assets/carousel/sample-game-7.png) |  True Story Game |
+| ![aditi1295](https://github.com/aditi1295.png) | [@aditi1295](https://github.com/aditi1295) | Color Game | ![Color Game](assets/carousel/sample-game-8.png) | Color Game |
 
 ---
 
