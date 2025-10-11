@@ -1,0 +1,297 @@
+<!--
+MIT License
+
+Memory Match — single-file HTML/CSS/JS game
+Author: ChatGPT for Posterfence
+
+How to use:
+1. Save this file as `index.html` inside a new folder.
+2. Open `index.html` in a modern browser to play locally.
+3. For a PR: include this file in the project (e.g. /games/memory-match/index.html), add a README.md with install/run/contributing instructions, and add a screenshot and live demo (GitHub Pages).
+
+Features:
+- Responsive single-file game (no build tools)
+- Card shuffle, matching logic, move counter, timer, star-rating, restart
+- Accessible keyboard support (Tab to focus cards, Enter/Space to flip)
+- Clean CSS, small footprint, ready for a Hacktoberfest PR
+-->
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Memory Match — Hacktoberfest Game</title>
+  <meta name="description" content="Memory Match game built with HTML/CSS/JS — single file, ready for Hacktoberfest PR." />
+  <style>
+    :root{
+      --bg:#0f1724; --card:#0b1220; --accent:#06b6d4; --glass: rgba(255,255,255,0.04);
+      --muted: #94a3b8; --success:#10b981; --danger:#ef4444; --card-face:#e6eef6;
+      --max-width:900px;
+      --radius:14px;
+      --gap:12px;
+      --transition:300ms cubic-bezier(.2,.9,.25,1);
+      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;}
+    body{
+      margin:0; background:linear-gradient(180deg,var(--bg), #031025 140%);
+      color:var(--card-face); display:flex; align-items:center; justify-content:center; padding:28px;
+    }
+
+    .wrap{width:100%; max-width:var(--max-width);}
+    header{display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:18px}
+    header h1{font-size:20px; margin:0}
+    .meta{color:var(--muted); font-size:13px}
+
+    .panel{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); padding:18px; border-radius:18px; box-shadow:0 6px 30px rgba(2,6,23,0.6)}
+
+    .controls{display:flex; gap:12px; align-items:center}
+    .btn{background:var(--glass); color:var(--card-face); border:0; padding:8px 12px; border-radius:10px; cursor:pointer; transition:var(--transition)}
+    .btn:hover{transform:translateY(-3px)}
+    .btn.primary{background:linear-gradient(90deg,var(--accent), #7c3aed); box-shadow:0 6px 18px rgba(6,182,212,0.12)}
+
+    .status{display:flex; gap:12px; align-items:center; color:var(--muted); font-weight:600}
+    .grid{display:grid; gap:var(--gap); margin-top:14px}
+
+    /* Responsive grid sizes */
+    @media (min-width: 0px){ .grid{grid-template-columns:repeat(4,1fr)} }
+    @media (min-width:680px){ .grid{grid-template-columns:repeat(6,1fr)} }
+    @media (min-width:980px){ .grid{grid-template-columns:repeat(6,1fr)} }
+
+    /* Card styles */
+    .card{
+      aspect-ratio: 3/4; perspective:900px; position:relative; cursor:pointer; border-radius:12px; outline:none;
+    }
+    .card-inner{position:absolute; inset:0; transform-style:preserve-3d; transition:transform 450ms cubic-bezier(.2,.9,.25,1)}
+    .card[aria-pressed="true"] .card-inner{transform:rotateY(180deg)}
+    .face{position:absolute; inset:0; backface-visibility:hidden; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:700}
+
+    .front{background:linear-gradient(180deg,#07203a 0%, #04202b 100%); color:var(--card-face); box-shadow:inset 0 -2px 0 rgba(255,255,255,0.02), 0 6px 18px rgba(2,6,23,0.5);}
+    .back{background:linear-gradient(180deg,#f8fafc,#e6eef6); color:#092131; transform:rotateY(180deg); border:1px solid rgba(10,20,30,0.06);}
+
+    .emoji{font-size:28px}
+    .matched .card-inner{transform:scale(0.98); box-shadow:0 8px 30px rgba(16,185,129,0.06)}
+
+    .tile-label{font-size:12px; color:var(--muted); margin-top:8px; text-align:center}
+
+    .footer{display:flex; gap:12px; align-items:center; justify-content:space-between; margin-top:12px}
+
+    /* small animations */
+    .pulse{animation:pulse 1.4s infinite}
+    @keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.02)}100%{transform:scale(1)}}
+
+    /* win modal */
+    .overlay{position:fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:80}
+    .overlay.show{display:flex}
+    .modal{background:linear-gradient(180deg,#04293a,#0b1e2a); padding:22px; border-radius:16px; width:min(520px,92%); text-align:center; box-shadow:0 28px 80px rgba(2,6,23,0.6)}
+    .modal h2{margin:6px 0 8px}
+    .modal p{color:var(--muted)}
+
+    /* small helpers */
+    .muted{color:var(--muted)}
+    .flex{display:flex; gap:8px; align-items:center}
+    .stars{color:gold}
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="panel">
+      <header>
+        <div>
+          <h1>Memory Match</h1>
+          <div class="meta">Simple card-memory game — ready for Hacktoberfest PR</div>
+        </div>
+
+        <div class="controls">
+          <div class="status">
+            <span id="moves">Moves: 0</span>
+            <span id="timer">Time: 0s</span>
+            <span id="rating">Rating: ⭐⭐⭐</span>
+          </div>
+          <button class="btn" id="shuffleBtn" title="Shuffle">Shuffle</button>
+          <button class="btn primary" id="restartBtn">Restart</button>
+        </div>
+      </header>
+
+      <main>
+        <section id="board" class="grid" aria-label="Memory board"></section>
+        <div class="footer">
+          <div class="muted">Tip: Use keyboard — tab to a card and press Enter/Space to flip.</div>
+          <div class="flex">
+            <a class="btn" id="viewReadme" href="#">README</a>
+            <a class="btn" id="liveDemo" href="https://example.com" target="_blank">Live demo</a>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Win Modal -->
+  <div class="overlay" id="overlay" role="dialog" aria-modal="true">
+    <div class="modal" role="document">
+      <h2 id="winTitle">You won 🎉</h2>
+      <p id="winStats"></p>
+      <div style="margin-top:14px">
+        <button class="btn primary" id="playAgain">Play again</button>
+        <button class="btn" id="closeWin">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- Game data / settings ---
+    const EMOJIS = ['🍎','🍌','🍇','🍒','🍉','🍓','🥝','🍊','🍍','🥑','🍑','🍐'];
+    const PAIRS = 8; // number of pairs to use (max limited by EMOJIS length)
+
+    // cached DOM
+    const boardEl = document.getElementById('board');
+    const movesEl = document.getElementById('moves');
+    const timerEl = document.getElementById('timer');
+    const ratingEl = document.getElementById('rating');
+    const restartBtn = document.getElementById('restartBtn');
+    const shuffleBtn = document.getElementById('shuffleBtn');
+    const overlay = document.getElementById('overlay');
+    const winStats = document.getElementById('winStats');
+    const playAgain = document.getElementById('playAgain');
+    const closeWin = document.getElementById('closeWin');
+
+    let deck = [];
+    let firstCard = null;
+    let secondCard = null;
+    let lock = false;
+    let moves = 0;
+    let matched = 0;
+    let timer = null;
+    let seconds = 0;
+
+    function makeDeck(){
+      const picked = EMOJIS.slice(0, PAIRS);
+      const dup = picked.concat(picked);
+      return shuffleArray(dup).map((emoji, i) => ({id:i+'-'+emoji, emoji, matched:false}));
+    }
+
+    function shuffleArray(a){
+      for(let i=a.length-1;i>0;i--){
+        const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];
+      }
+      return a;
+    }
+
+    function buildBoard(){
+      boardEl.innerHTML = '';
+      deck.forEach((cardData, idx) => {
+        const btn = document.createElement('button');
+        btn.className='card';
+        btn.setAttribute('aria-pressed','false');
+        btn.setAttribute('data-index', idx);
+        btn.setAttribute('aria-label','Card');
+        btn.innerHTML = `
+          <div class="card-inner">
+            <div class="face front"><span class="emoji">?</span></div>
+            <div class="face back"><span class="emoji">${cardData.emoji}</span></div>
+          </div>
+        `;
+        // keyboard support
+        btn.addEventListener('keydown', (e)=>{
+          if(e.key==='Enter' || e.key===' '){ e.preventDefault(); flipCard(btn); }
+        });
+
+        btn.addEventListener('click', ()=> flipCard(btn));
+        boardEl.appendChild(btn);
+      });
+    }
+
+    function flipCard(btn){
+      if(lock) return;
+      const idx = +btn.getAttribute('data-index');
+      const data = deck[idx];
+      if(data.matched) return;
+      if(btn.getAttribute('aria-pressed')==='true') return; // already face up
+
+      btn.setAttribute('aria-pressed','true');
+
+      if(!firstCard){ firstCard = {btn, idx}; startTimerIfNeeded(); return; }
+      secondCard = {btn, idx};
+      lock = true; moves++; updateMoves();
+
+      const a = deck[firstCard.idx].emoji;
+      const b = deck[secondCard.idx].emoji;
+
+      if(a===b){
+        // match!
+        deck[firstCard.idx].matched = true;
+        deck[secondCard.idx].matched = true;
+        setTimeout(()=>{
+          firstCard.btn.classList.add('matched');
+          secondCard.btn.classList.add('matched');
+          resetTurn(); matched++; updateRating(); checkWin();
+        }, 500);
+      } else {
+        setTimeout(()=>{
+          firstCard.btn.setAttribute('aria-pressed','false');
+          secondCard.btn.setAttribute('aria-pressed','false');
+          resetTurn(); updateRating();
+        }, 700);
+      }
+    }
+
+    function resetTurn(){ firstCard=null; secondCard=null; lock=false; }
+
+    function updateMoves(){ movesEl.textContent = `Moves: ${moves}`; }
+
+    function startTimerIfNeeded(){ if(timer) return; timer = setInterval(()=>{ seconds++; timerEl.textContent = `Time: ${seconds}s`; },1000); }
+
+    function stopTimer(){ if(timer){ clearInterval(timer); timer=null; } }
+
+    function updateRating(){
+      let stars = 3;
+      if(moves > PAIRS*2 + 6) stars = 2;
+      if(moves > PAIRS*3 + 6) stars = 1;
+      ratingEl.textContent = 'Rating: ' + '⭐'.repeat(stars) + '☆'.repeat(3-stars);
+    }
+
+    function checkWin(){ if(matched >= PAIRS){ stopTimer(); showWin(); } }
+
+    function showWin(){
+      overlay.classList.add('show');
+      winStats.textContent = `You completed ${PAIRS} pairs in ${moves} moves and ${seconds} seconds.`;
+    }
+
+    function hideWin(){ overlay.classList.remove('show'); }
+
+    function resetGame({shuffle=true} = {}){
+      stopTimer(); seconds=0; timerEl.textContent = `Time: 0s`;
+      moves=0; matched=0; updateMoves(); updateRating();
+      deck = makeDeck();
+      if(shuffle) deck = shuffleArray(deck);
+      buildBoard();
+      resetTurn();
+      // focus first card for accessibility
+      setTimeout(()=>{ const first = boardEl.querySelector('.card'); if(first) first.focus(); }, 80);
+    }
+
+    // Event wiring
+    restartBtn.addEventListener('click', ()=>{ resetGame({shuffle:true}); });
+    shuffleBtn.addEventListener('click', ()=>{ resetGame({shuffle:true}); });
+    playAgain.addEventListener('click', ()=>{ hideWin(); resetGame({shuffle:true}); });
+    closeWin.addEventListener('click', hideWin);
+
+    document.getElementById('viewReadme').addEventListener('click', (e)=>{
+      e.preventDefault(); alert('For a PR: include README.md with run instructions, screenshot, and a short description.\n\nFiles: index.html, screenshot.png, README.md, LICENSE');
+    });
+
+    // init
+    deck = makeDeck();
+    buildBoard();
+
+    // Expose helper for demo/testing in console
+    window.__memory = {resetGame, deck};
+
+    // Cleanup: free timers when page hidden
+    document.addEventListener('visibilitychange', ()=>{ if(document.hidden) stopTimer(); });
+  </script>
+</body>
+</html>
