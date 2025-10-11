@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dungeon Dash</title>
+    <!-- Google Fonts for a pixelated/fantasy theme -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        /* Basic reset and styling for the page */
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Prevents scrollbars */
+            background-color: #000;
+            color: #fff;
+            font-family: 'Press Start 2P', cursive;
+        }
+
+        /* Canvas styling */
+        #gameCanvas {
+            display: block;
+            background-color: #222; /* Dungeon floor color */
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        /* Container for all UI elements */
+        .ui-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+            pointer-events: none; /* Allows clicks to pass through */
+        }
+
+        /* Top section for game stats */
+        .game-stats {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            font-size: clamp(0.8rem, 3vw, 1.2rem);
+            text-shadow: 2px 2px #000;
+        }
+
+        /* Bottom section for game controls */
+        .game-controls {
+            display: flex;
+            gap: 15px;
+            pointer-events: auto; /* Re-enable pointer events for buttons */
+        }
+
+        /* Styling for the control buttons */
+        .control-btn {
+            background: #4a4a4a;
+            color: #fff;
+            border: 2px solid #fff;
+            padding: 12px 24px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: clamp(0.7rem, 2.5vw, 1rem);
+            cursor: pointer;
+            box-shadow: 4px 4px 0px #000;
+            transition: all 0.1s ease-in-out;
+        }
+
+        .control-btn:hover {
+            background: #666;
+        }
+
+        .control-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px #000;
+        }
+        
+        /* Modal for messages and character selection */
+        .modal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #1a1a1a;
+            border: 4px solid #fff;
+            padding: 30px;
+            text-align: center;
+            z-index: 3;
+            display: none; /* Hidden by default */
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 8px 8px 0px #000;
+            width: 80%;
+            max-width: 700px;
+        }
+
+        .modal h1 {
+            margin: 0;
+            font-size: clamp(1.2rem, 5vw, 2rem);
+        }
+        .modal p {
+            margin: 0;
+            font-size: clamp(0.8rem, 3vw, 1rem);
+            line-height: 1.6;
+        }
+        
+        #character-select {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            width: 100%;
+        }
+
+        .char-card {
+            background: #333;
+            border: 2px solid #fff;
+            padding: 15px;
+            cursor: pointer;
+            width: 150px;
+            transition: background 0.2s;
+        }
+        .char-card:hover {
+            background: #555;
+        }
+        .char-card h2 {
+            margin: 0 0 10px;
+            font-size: 1rem;
+            color: #ffd700;
+        }
+        .char-card p {
+            font-size: 0.7rem;
+            line-height: 1.4;
+        }
+
+    </style>
+</head>
+<body>
+
+    <canvas id="gameCanvas"></canvas>
+
+    <div class="ui-container">
+        <div class="game-stats">
+            <span id="levelDisplay">Level: 1</span>
+            <span id="keyDisplay">Key: Not Found</span>
+        </div>
+        <div class="game-controls">
+            <button class="control-btn" id="startPauseBtn">Pause</button>
+            <button class="control-btn" id="restartBtn">Restart</button>
+        </div>
+    </div>
+    
+    <div class="modal" id="messageModal">
+        <h1 id="modalTitle"></h1>
+        <p id="modalMessage"></p>
+        <div id="character-select"></div>
+        <button class="control-btn" id="modalActionBtn"></button>
+    </div>
+
+
+    <script>
+        // --- DOM ELEMENTS ---
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const levelDisplay = document.getElementById('levelDisplay');
+        const keyDisplay = document.getElementById('keyDisplay');
+        const startPauseBtn = document.getElementById('startPauseBtn');
+        const restartBtn = document.getElementById('restartBtn');
+        const messageModal = document.getElementById('messageModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalMessage = document.getElementById('modalMessage');
+        const modalActionBtn = document.getElementById('modalActionBtn');
+        const characterSelectContainer = document.getElementById('character-select');
+
+        // --- GAME STATE & CONFIG ---
+        let player, monsters, walls, gameKey, exit;
+        let level = 1;
+        let TILE_SIZE = 40;
+        let hasKey = false;
+        let isPaused = true;
+        let isGameOver = false;
+        let animationFrameId;
+        
+        const keys = { w: false, s: false, a: false, d: false, ' ': false };
+        let spacePressed = false; // To handle single press for ability
+
+        const characters = {
+            knight: { name: 'Knight', desc: 'Standard speed. Press SPACE to dash through weak walls.', color: '#c0c0c0', speed: 2, radius: TILE_SIZE/3 },
+            rogue: { name: 'Rogue', desc: 'Very fast with a smaller profile. Has no special ability.', color: '#228b22', speed: 3, radius: TILE_SIZE/4 },
+            mage: { name: 'Mage', desc: 'Slower speed. Press SPACE to fire a freezing bolt.', color: '#4169e1', speed: 1.5, radius: TILE_SIZE/3 }
+        };
+
+        const levelLayouts = [
+            [ // Level 1
+                "WWWWWWWWWWWW",
+                "W P    K   W",
+                "W WWW WW WWW",
+                "W  M     M W",
+                "W WWWWW WW W",
+                "W     W    W",
+                "W WWW   WWWW",
+                "W   M   E  W",
+                "WWWWWWWWWWWW",
+            ],
+            [ // Level 2
+                "WWWWWWWWWWWWWWWW",
+                "WP  W     M    W",
+                "W W W WWW WWWW W",
+                "W W   W K W    W",
+                "W WWWWW W WWWW W",
+                "W M   W W W    W",
+                "W W WWW W W WWWW",
+                "W W   M W   M  W",
+                "W WWWWWWWWWWWW W",
+                "W            E W",
+                "WWWWWWWWWWWWWWWW",
+            ]
+        ];
+
+        // --- CLASSES ---
+
+        class Player {
+            constructor(x, y, config) {
+                this.x = x; this.y = y; this.config = config;
+                this.radius = config.radius; this.speed = config.speed; this.color = config.color;
+            }
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2);
+                ctx.fill();
+            }
+            update() {
+                let dx = 0; let dy = 0;
+                if (keys.w) dy = -this.speed; if (keys.s) dy = this.speed;
+                if (keys.a) dx = -this.speed; if (keys.d) dx = this.speed;
+                
+                if (!this.checkWallCollision(this.x + dx, this.y)) this.x += dx;
+                if (!this.checkWallCollision(this.x, this.y + dy)) this.y += dy;
+                
+                if (keys[' '] && !spacePressed) {
+                    this.useAbility();
+                    spacePressed = true;
+                }
+            }
+            checkWallCollision(nextX, nextY) {
+                for (const wall of walls) {
+                    if (nextX - this.radius < wall.x + TILE_SIZE && nextX + this.radius > wall.x &&
+                        nextY - this.radius < wall.y + TILE_SIZE && nextY + this.radius > wall.y) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            useAbility() { /* Overridden by subclasses */ }
+        }
+
+        class Knight extends Player {
+            useAbility() {
+                // Dash ability
+                let dashX = 0; let dashY = 0;
+                if (keys.w) dashY = -TILE_SIZE*2; if (keys.s) dashY = TILE_SIZE*2;
+                if (keys.a) dashX = -TILE_SIZE*2; if (keys.d) dashX = TILE_SIZE*2;
+                if (!this.checkWallCollision(this.x + dashX, this.y + dashY)) {
+                    this.x += dashX;
+                    this.y += dashY;
+                }
+            }
+        }
+        class Rogue extends Player {} // No special ability
+        class Mage extends Player { /* Ability handled in main loop */ }
+        
+        class Monster {
+            constructor(x,y) { this.x = x; this.y = y; this.radius = TILE_SIZE/3; this.speed = 0.5; this.dir = 1; }
+            draw() { ctx.fillStyle = 'red'; ctx.fillRect(this.x, this.y, TILE_SIZE, TILE_SIZE); }
+            update() { 
+                this.x += this.speed * this.dir;
+                if(walls.some(w => getDistance(this.x + (this.dir > 0 ? TILE_SIZE : 0), this.y, w.x, w.y) < TILE_SIZE)) {
+                    this.dir *= -1;
+                }
+            }
+        }
+        
+        class Wall {
+            constructor(x,y) { this.x = x; this.y = y; }
+            draw() { ctx.fillStyle = '#888'; ctx.fillRect(this.x, this.y, TILE_SIZE, TILE_SIZE); }
+        }
+        
+        // --- HELPER FUNCTIONS ---
+        const getDistance = (x1, y1, x2, y2) => Math.sqrt(Math.pow(x2-x1,2) + Math.pow(y2-y1,2));
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            // Adjust TILE_SIZE based on screen size for responsiveness
+            const layout = levelLayouts[level-1] || levelLayouts[0];
+            const layoutWidth = layout[0].length;
+            const layoutHeight = layout.length;
+            TILE_SIZE = Math.min(canvas.width / layoutWidth, canvas.height / layoutHeight);
+            if (player) setupLevel(level); // Redraw level if it exists
+        }
+
+        // --- GAME LOGIC ---
+        function init() {
+            isGameOver = false; hasKey = false;
+            level = 1; updateUI();
+            showCharacterSelect();
+        }
+
+        function showCharacterSelect() {
+            isPaused = true;
+            modalTitle.textContent = "Dungeon Dash";
+            modalMessage.textContent = "Choose your hero to escape the dungeon!";
+            modalActionBtn.style.display = 'none';
+            characterSelectContainer.innerHTML = '';
+
+            for (const charKey in characters) {
+                const char = characters[charKey];
+                const card = document.createElement('div');
+                card.className = 'char-card';
+                card.innerHTML = `<h2>${char.name}</h2><p>${char.desc}</p>`;
+                card.onclick = () => startGame(charKey);
+                characterSelectContainer.appendChild(card);
+            }
+            messageModal.style.display = 'flex';
+        }
+
+        function startGame(characterKey) {
+            messageModal.style.display = 'none';
+            const charConfig = characters[characterKey];
+            const layout = levelLayouts[level - 1];
+            const startPos = getSymbolPos(layout, 'P');
+            
+            if (characterKey === 'knight') player = new Knight(startPos.x, startPos.y, charConfig);
+            else if (characterKey === 'rogue') player = new Rogue(startPos.x, startPos.y, charConfig);
+            else if (characterKey === 'mage') player = new Mage(startPos.x, startPos.y, charConfig);
+
+            setupLevel(level);
+            isPaused = false;
+            startPauseBtn.textContent = 'Pause';
+            gameLoop();
+        }
+        
+        function getSymbolPos(layout, symbol) {
+            for (let r=0; r < layout.length; r++) {
+                for (let c=0; c < layout[r].length; c++) {
+                    if(layout[r][c] === symbol) return { x: c * TILE_SIZE + TILE_SIZE/2, y: r * TILE_SIZE + TILE_SIZE/2 };
+                }
+            }
+        }
+
+        function setupLevel(lvl) {
+            if(lvl > levelLayouts.length) { winGame(); return; }
+            const layout = levelLayouts[lvl - 1];
+            walls = []; monsters = []; hasKey = false; updateUI();
+            
+            const offsetX = (canvas.width - layout[0].length * TILE_SIZE) / 2;
+            const offsetY = (canvas.height - layout.length * TILE_SIZE) / 2;
+            
+            for (let r = 0; r < layout.length; r++) {
+                for (let c = 0; c < layout[r].length; c++) {
+                    const char = layout[r][c];
+                    const x = c * TILE_SIZE + offsetX;
+                    const y = r * TILE_SIZE + offsetY;
+                    if (char === 'W') walls.push(new Wall(x,y));
+                    else if (char === 'P' && player) { player.x = x + TILE_SIZE/2; player.y = y + TILE_SIZE/2; }
+                    else if (char === 'M') monsters.push(new Monster(x,y));
+                    else if (char === 'K') gameKey = { x, y, radius: TILE_SIZE/3 };
+                    else if (char === 'E') exit = { x, y };
+                }
+            }
+        }
+        
+        function levelComplete() {
+            level++;
+            if (level > levelLayouts.length) {
+                winGame();
+            } else {
+                showModal("Level Complete!", `Get ready for level ${level}.`, "Continue", () => {
+                    messageModal.style.display = 'none';
+                    isPaused = false;
+                    setupLevel(level);
+                    gameLoop();
+                });
+            }
+        }
+        
+        function showModal(title, msg, btnText, action) {
+            isPaused = true;
+            modalTitle.textContent = title;
+            modalMessage.textContent = msg;
+            modalActionBtn.textContent = btnText;
+            modalActionBtn.onclick = action;
+            modalActionBtn.style.display = 'block';
+            characterSelectContainer.innerHTML = '';
+            messageModal.style.display = 'flex';
+        }
+        
+        const winGame = () => showModal("You Escaped!", "You conquered the dungeon!", "Play Again", init);
+        const gameOver = () => showModal("Game Over", "The dungeon claims another soul...", "Try Again", init);
+        
+        function updateUI() {
+            levelDisplay.textContent = `Level: ${level}`;
+            keyDisplay.textContent = hasKey ? "Key: Found!" : "Key: Not Found";
+            keyDisplay.style.color = hasKey ? '#ffd700' : '#fff';
+        }
+
+        // --- GAME LOOP ---
+        function gameLoop() {
+            if (isPaused || isGameOver) return;
+            animationFrameId = requestAnimationFrame(gameLoop);
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            player.update();
+            monsters.forEach(m => m.update());
+            
+            walls.forEach(w => w.draw());
+            monsters.forEach(m => m.draw());
+            
+            // Draw Key
+            if(!hasKey) {
+                ctx.fillStyle = '#ffd700';
+                ctx.beginPath();
+                ctx.arc(gameKey.x + TILE_SIZE/2, gameKey.y + TILE_SIZE/2, gameKey.radius, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            // Draw Exit
+            ctx.fillStyle = hasKey ? '#0f0' : '#555';
+            ctx.fillRect(exit.x, exit.y, TILE_SIZE, TILE_SIZE);
+            
+            player.draw();
+            
+            // Collisions
+            if (!hasKey && getDistance(player.x, player.y, gameKey.x + TILE_SIZE/2, gameKey.y + TILE_SIZE/2) < player.radius + gameKey.radius) {
+                hasKey = true; updateUI();
+            }
+            if (hasKey && getDistance(player.x, player.y, exit.x + TILE_SIZE/2, exit.y + TILE_SIZE/2) < player.radius + TILE_SIZE/2) {
+                levelComplete();
+            }
+            monsters.forEach(m => {
+                if (getDistance(player.x, player.y, m.x + TILE_SIZE/2, m.y + TILE_SIZE/2) < player.radius + m.radius) {
+                    gameOver();
+                }
+            });
+        }
+        
+        // --- EVENT LISTENERS ---
+        window.addEventListener('resize', resizeCanvas);
+        window.addEventListener('keydown', e => { if (e.key.toLowerCase() in keys) keys[e.key.toLowerCase()] = true; });
+        window.addEventListener('keyup', e => { 
+            const key = e.key.toLowerCase();
+            if (key in keys) keys[key] = false; 
+            if (key === ' ') spacePressed = false;
+        });
+
+        startPauseBtn.addEventListener('click', () => {
+             isPaused = !isPaused;
+             startPauseBtn.textContent = isPaused ? 'Resume' : 'Pause';
+             if (!isPaused) gameLoop();
+        });
+        restartBtn.addEventListener('click', init);
+
+        // --- START ---
+        init();
+        resizeCanvas();
+
+    </script>
+</body>
+</html>
+
