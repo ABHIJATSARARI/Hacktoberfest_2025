@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Escape the Maze: Space Edition</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="hud">
+    <div id="level">Level: 1</div>
+    <div id="timer">Time: 0s</div>
+    <div id="score">Score: 0</div>
+    <button id="restart">Stuck? Click to Restart </button>
+  </div>
+
+  <div id="container">
+    <!-- Rules box on left -->
+    <div id="rules">
+      <h3> 👩‍🚀 Rules 🧑‍🚀</h3>
+      <ul>
+        <li>Completed level within 30s → 100 points</li>
+        <li> Completed level beyond 30 secs → 80 points</li>
+        <li> Hit a meteor or restart → 50 points</li>
+        <li>Try to reach the portal in one go for max points!</li>
+      </ul>
+
+      <h3>How to Play?</h3>
+  <p>
+    Use the <strong>Arrow Keys</strong> on your keyboard to move your spaceship:<br>
+    &nbsp;&nbsp;&rarr; Move Right<br>
+    &nbsp;&larr; Move Left<br>
+    &nbsp;&uarr; Move Up<br>
+    &nbsp;&darr; Move Down<br>
+    Avoid meteors and reach the portal to complete each level.
+  </p>
+    </div>
+
+    <!-- Maze -->
+    <div id="maze-container">
+      <div id="maze"></div>
+    </div>
+  </div>
+
+  <div id="status"></div>
+  <div id="starfield"></div>
+
+  <audio id="move-sound" src="sounds/move.ogg"></audio>
+  <audio id="hit-sound" src="sounds/explosion-31267.mp3"></audio>
+  <audio id="warp-sound" src="sounds/warp-306033.mp3"></audio>
+
+  <script src="script.js"></script>
+</body>
+</html>
