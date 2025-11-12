@@ -1,0 +1,187 @@
+/* General */
+body {
+  margin: 0;
+  font-family: "Orbitron", sans-serif;
+  color: #00ffff;
+  background: black;
+  overflow: hidden;
+}
+
+#hud {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 650px;
+  margin: 20px auto;
+  font-size: 1.2rem;
+  text-shadow: 0 0 6px #00e1ff;
+}
+
+#hud button {
+  background: rgba(0, 255, 255, 0.1);
+  color: #00ffff;
+  border: 2px solid #00ffff;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-family: inherit;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+  font-size: 1.1rem;
+}
+#hud button:hover {
+  background: #00ffff;
+  color: #000;
+}
+
+/* Container for maze + rules */
+#container {
+  display: flex;
+  justify-content: center ;
+  align-items: flex-start;
+  gap: 60px;
+  margin-top: 40px;
+  position: relative;
+}
+
+/* Rules box */
+#rules {
+  background: rgba(255, 255, 255, 0.12);
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 220px;
+  text-align: left;
+  box-shadow: 0 0 15px #00ffff;
+  position: relative;
+  left: -40px; /* slightly left of maze */
+  font-family: "Orbitron", sans-serif;
+  color: #00ffff;
+}
+
+#rules h3 {
+  margin-top: 15px;
+  margin-bottom: 10px;
+  text-align: center;
+  font-size: 1.1rem;
+}
+
+#rules ul {
+  padding-left: 15px;
+  margin-bottom: 12px;
+  font-size: 0.95rem;
+  line-height: 1.3;
+}
+
+#rules p {
+  font-size: 0.95rem;
+  line-height: 1.4;
+  margin-left: 0;
+}
+
+
+/* Maze container */
+#maze-container {
+  border: 2px solid #00ffff;
+  box-shadow: 0 0 35px #00e1ff;
+  padding: 10px;
+}
+
+#maze {
+  display: grid;
+  grid-template-columns: repeat(20, 30px);
+  grid-template-rows: repeat(20, 30px);
+  gap: 1px;
+}
+
+.cell {
+  width: 30px;
+  height: 30px;
+  background: transparent;
+}
+
+.wall {
+  background-image: url("./images/meteorGrey_big3.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  filter: brightness(1.4) drop-shadow(0 0 10px #ffae42);
+}
+
+.player {
+  background-image: url("./images/spaceship.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  filter: drop-shadow(0 0 10px #00ffff);
+  position: relative;
+}
+.player::after {
+  content: "";
+  position: absolute;
+  width: 8px;
+  height: 15px;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(to top, orange, yellow, transparent);
+  border-radius: 50%;
+  filter: blur(3px);
+  animation: thruster 0.3s infinite alternate;
+}
+@keyframes thruster { 0% { height: 12px; opacity: 0.6; } 100% { height: 18px; opacity: 1; } }
+
+.portal {
+  background-image: url("./images/ufoBlue.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  filter: drop-shadow(0 0 12px #00ffff);
+  animation: pulse 1s infinite alternate, rotate 3s linear infinite;
+}
+@keyframes pulse { 0% { transform: scale(1); } 100% { transform: scale(1.2); } }
+@keyframes rotate { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+.explosion {
+  background-image: url("./images/playerShip3_damage3.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  filter: drop-shadow(0 0 15px red) brightness(1.6);
+  animation: explode 0.5s ease-in-out;
+}
+@keyframes explode { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.3); opacity: 0.8; } 100% { transform: scale(0.7); opacity: 0; } }
+
+.maze-shake { animation: shake 0.3s; }
+@keyframes shake { 0% { transform: translate(0,0); } 25% { transform: translate(-5px,0); } 50% { transform: translate(5px,0); } 75% { transform: translate(-5px,0); } 100% { transform: translate(0,0); } }
+
+.trail {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  background: radial-gradient(circle, #00ffff 0%, transparent 70%);
+  pointer-events: none;
+  opacity: 0.7;
+  animation: fadeTrail 0.4s forwards;
+}
+@keyframes fadeTrail { to { opacity: 0; transform: scale(0.5); } }
+
+#starfield { position: absolute;
+   top: 0; 
+   left: 0; 
+   width: 100%;
+    height: 100%;
+     z-index: -1;
+     }
+.star { 
+  position: absolute;
+   width: 2px; height: 2px;
+    background: white; 
+    opacity: 0.8;
+     border-radius: 50%; 
+     animation: twinkle linear infinite; }
+     
+@keyframes twinkle { 0%,100% { opacity: 0.2; } 50% { opacity: 1; } }
+.comet { position: absolute; width: 2px; height: 10px; background: linear-gradient(to top, white, transparent); opacity: 0.8; border-radius: 50%; pointer-events: none; animation: moveComet linear infinite; }
+@keyframes moveComet { 0% { transform: translate(0,0) rotate(45deg); opacity: 1; } 100% { transform: translate(-100vw,100vh) rotate(45deg); opacity: 0; } }
+
+#status { margin-top: 10px; text-align: center; color: #00ffff; text-shadow: 0 0 6px #00e1ff; }
